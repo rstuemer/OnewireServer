@@ -1,6 +1,6 @@
 #include "RestWebServer.h"
-#include <ArduinoJson.h>
-
+#include "Domain/Sensor.h"
+#include "View/JsonView.h"
 
 RestWebServer::RestWebServer()
 {
@@ -14,32 +14,35 @@ void RestWebServer::run(Controller *controller)
 {
     // listen for incoming clients
 
-    StaticJsonDocument<500> doc;
+  
 
     EthernetClient client = this->server->available();
      if (client)
     {
         Request request = this->waitTillRequestEnded(client);
 
-        this->printJsonHeader(client, measureJsonPretty(doc));
-        serializeJson(doc, Serial);
-        serializeJsonPretty(doc, client);
+        if(request.getPath() == "/" && request.getHttpMethode() =="GET"){
 
+         Sensor* sensors = controller->listAllSensors();
+         JsonView view = JsonView(client);
+         view.addToJson(sensors);
+         view.render();
+        }else{
+            client << request.getPath();
+        }
+
+  
         // give the web browser time to receive the data
         delay(10);
         // close the connection:
         client.stop();
-        //Serial.print("REQUEST[1]:");
-        //Serial.println(request[1]);
-      
-            Serial.println(request.getPath());
-        
         
     }
 }
 
  Request RestWebServer::waitTillRequestEnded(EthernetClient client)
 {
+      Request requestObj =  Request();
 
     if (client)
     {
@@ -47,10 +50,9 @@ void RestWebServer::run(Controller *controller)
         // an http request ends with a blank line
         boolean currentLineIsBlank = true;
         String line = "";
-        bool newLine = true;
-        String *request = new String[20];
-        int lineCount = 0;
-        bool firstLine = true;
+        String request[10] =  {};
+        int lineCount=0;
+      
         while (client.connected())
         {
 
@@ -64,18 +66,13 @@ void RestWebServer::run(Controller *controller)
                 // so you can send a reply
                 if (c == '\n' && currentLineIsBlank)
                 {
-                   
                     break;
-
                 }
                 if (c == '\n')
                 {
                     // you're starting a new line
                     currentLineIsBlank = true;
-                    newLine = true;
-
                     request[lineCount++] = line;            
-                    firstLine = false;
                     line = "";
                 }
                 else if (c != '\r')
@@ -86,34 +83,21 @@ void RestWebServer::run(Controller *controller)
                 }
             }
         }
-        Request requestObj =  Request();
+      
         requestObj.processRequestString(request);
-        return requestObj;
     }
+        return requestObj;
 }
 
-void RestWebServer::printJsonHeader(EthernetClient client, size_t size)
-{
-    // send a standard http response header
-    client.println("HTTP/1.1 200 OK");
-    client.println("Content-Type:  application/json");
-    client.println("Connection: close"); // the connection will be closed after completion of the response
-    client.print(F("Content-Length: "));
-    client.println(size);
-    //client.println("Refresh: 5");         refresh the page automatically every 5 sec
-
-    client.println();
-}
 
 void RestWebServer::startEthernetServer()
 {
-
-    // start the server
-    this->server->begin();
-#ifdef SERIAL_DEBUGGING
-    Serial.print("SERVER ON AT: ");
-    Serial.println(Ethernet.localIP());
-#endif
+        // start the server
+        this->server->begin();
+    #ifdef SERIAL_DEBUGGING
+        Serial.print("SERVER ON AT: ");
+        Serial.println(Ethernet.localIP());
+    #endif
 }
 
 String RestWebServer::initEthernet()
@@ -125,26 +109,26 @@ String RestWebServer::initEthernet()
     //Ethernet.init(20);  // Teensy++ 2.0
     //Ethernet.init(15);  // ESP8266 with Adafruit Featherwing Ethernet
     //Ethernet.init(33);  // ESP32 with Adafruit Featherwing Ethernet
-#ifdef SERIAL_DEBUGGING
-    Serial.println("Ethernet WebServer Example");
-#endif
+    #ifdef SERIAL_DEBUGGING
+        Serial.println("Ethernet WebServer Example");
+    #endif
 
-    // start the Ethernet connection and the server:
-    Ethernet.begin(mac, ip);
+        // start the Ethernet connection and the server:
+        Ethernet.begin(mac, ip);
 
-    // Check for Ethernet hardware present
-    if (Ethernet.hardwareStatus() == EthernetNoHardware)
-    {
-#ifdef SERIAL_DEBUGGING
-        Serial.println("Ethernet shield was not found.  Sorry, can't run without hardware. :(");
-#endif
-        return "Ethernet shield was not found.  Sorry, can't run without hardware. :(";
-    }
-    if (Ethernet.linkStatus() == LinkOFF)
-    {
-#ifdef SERIAL_DEBUGGING
-        Serial.println("Ethernet cable is not connected.");
-#endif
+        // Check for Ethernet hardware present
+        if (Ethernet.hardwareStatus() == EthernetNoHardware)
+        {
+    #ifdef SERIAL_DEBUGGING
+            Serial.println("Ethernet shield was not found.  Sorry, can't run without hardware. :(");
+    #endif
+            return "Ethernet shield was not found.  Sorry, can't run without hardware. :(";
+        }
+        if (Ethernet.linkStatus() == LinkOFF)
+        {
+    #ifdef SERIAL_DEBUGGING
+            Serial.println("Ethernet cable is not connected.");
+    #endif
         return "Ethernet cable is not connected.";
     }
 

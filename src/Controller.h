@@ -5,12 +5,12 @@
 #include "config.h"
 #include "Ethernet.h"
 #include "ArduinoJson.h"
-
+#include "Domain/Sensor.h"
 class Controller
 {
 public:
     Controller();
-    void listAllSensors();
+    Sensor* listAllSensors();
     void debugInformations();
 
 private:

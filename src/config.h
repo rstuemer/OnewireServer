@@ -2,8 +2,9 @@
 #ifndef CONFIG_H // include guard
 #define CONFIG_H
 
-
-
+#ifndef ONE_WIRE_BUS
+#define ONE_WIRE_BUS 14
+#endif
 // add "#define SERIAL_DEBUGGING 1" to your application
 // before including to have incoming requests logged to
 // the serial port.

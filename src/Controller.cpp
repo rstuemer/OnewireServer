@@ -1,88 +1,85 @@
 #include "Arduino.h"
 #include "Controller.h"
+#include <OneWire.h>
+#include "DallasTemperature.h"
+/**
+*@brief Return all Sensors as json
+*
+*
+*/
 
-  /**
- * @brief Return all Sensors as json
- * 
- * 
- */
+Controller::Controller() {}
 
+Sensor *Controller::listAllSensors() {
+  Sensor sensors[10];
+  OneWire ow(ONE_WIRE_BUS);
+  uint8_t count = 0;
+  uint8_t dummy_address[8];
+  dummy_address[0] = 0xA0; // TLSB --> 10 degC as std
+  dummy_address[1] = 0x00; // TMSB
+  dummy_address[2] = 0x4B; // THRE --> Trigger register TH
+  dummy_address[3] = 0x46; // TLRE --> TLow
+  dummy_address[4] = 0x7F; // Conf
+  // = 0 R1 R0 1 1 1 1 1 --> R=0 9bit .... R=3 12bit
+  dummy_address[5] = 0xFF; // 0xFF
+  dummy_address[6] = 0x00; // Reset
+  dummy_address[7] = 0x10; // 0x10
 
-Controller::Controller(){
-    
+  Sensor dummy_sensor = Sensor(dummy_address);
+  dummy_sensor.setValue("21");
+  dummy_sensor.setFamilyCode(28);
+  sensors[count++] = dummy_sensor;
+  uint8_t address[8];
+
+  // Setup a oneWire instance to communicate with any OneWire devices (not just
+  // Maxim/Dallas temperature ICs)
+  /**OneWire oneWire(ONE_WIRE_BUS);
+
+  if (oneWire.search(address)) {
+    do {
+      
+
+      Sensor sensor = Sensor(address);
+      sensors[count] = sensor;
+      count++;
+
+    } while (ow.search(address));
+  }*/
+
+  return sensors;
 }
 
+void Controller::debugInformations() {
 
+  // server.httpSuccess(false, "application/json");
+  // this->server.httpSuccess("application/json");
 
-void Controller::listAllSensors()
-{
-    
-    /**
-    //server.httpSuccess(false, "application/json");
-    //server.httpSuccess("application/json");
-
-    
-
-    int i;
-    //server << "{ ";
-    for (i = 0; i <= 9; ++i)
-    {
-        // ignore the pins we use to talk to the Ethernet chip
-        //int val = digitalRead(i);
-        //server << "\"d" << i << "\": " << val << ", ";
-    }
-
-    for (i = 0; i <= 5; ++i)
-    {
-      //  int val = analogRead(i);
-       // server << "\"a" << i << "\": " << val;
-       // if (i != 5)
-           // server << ", ";
-    }
-
-   // server << " }";
-
-   */
+  // Check for Ethernet hardware present
+  if (Ethernet.hardwareStatus() == EthernetNoHardware) {
+    Serial.println("Ethernet shield was not found.  Sorry, can't run without "
+                   "hardware. :(");
+  }
+  if (Ethernet.linkStatus() == LinkOFF) {
+    Serial.println("MayBe Ethernet cable is not connected.");
+  }
 }
 
+String Controller::getLinkStatus() {
+  auto link = Ethernet.linkStatus();
+  // Serial.print("Link status: ");
+  switch (link) {
+  case Unknown:
+    return "Unknown";
+    break;
+  case LinkON:
+    return "ON";
+    break;
+  case LinkOFF:
+    return "OFF";
+    break;
+  }
 
-
-void Controller::debugInformations()
-{
-
-    //server.httpSuccess(false, "application/json");
-    //this->server.httpSuccess("application/json");
-
-
-    // Check for Ethernet hardware present
-    if (Ethernet.hardwareStatus() == EthernetNoHardware)
-    {
-        Serial.println("Ethernet shield was not found.  Sorry, can't run without hardware. :(");
-    }
-    if (Ethernet.linkStatus() == LinkOFF)
-    {
-        Serial.println("MayBe Ethernet cable is not connected.");
-    }
-}
-
-String Controller::getLinkStatus()
-{
-    auto link = Ethernet.linkStatus();
-    //Serial.print("Link status: ");
-    switch (link)
-    {
-    case Unknown:
-        return "Unknown";
-        break;
-    case LinkON:
-        return "ON";
-        break;
-    case LinkOFF:
-        return "OFF";
-        break;
-    }
-
-    return "FAIL";
+  return "FAIL";
 }
 /*
 void outputPins()
@@ -143,6 +140,3 @@ void outputPins()
     server << "</body></html>";
 }
 */
-  
-
-

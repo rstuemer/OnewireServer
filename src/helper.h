@@ -13,5 +13,9 @@ inline Print &operator <<(Print &obj, T arg)
 
 
 
+ String getValueAtIndex(String data, char separator, int index);
+
+ String* splitString(String data,char separator);
+
 
 #endif /* HELPER_H */

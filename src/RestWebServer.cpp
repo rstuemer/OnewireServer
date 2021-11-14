@@ -20,14 +20,20 @@ void RestWebServer::run(Controller *controller)
      if (client)
     {
         Request request = this->waitTillRequestEnded(client);
-
+        Serial.println("Request Ended");
         if(request.getPath() == "/" && request.getHttpMethode() =="GET"){
-
+            Serial.println("Path is /");
          Sensor* sensors = controller->listAllSensors();
+         Serial.println("Create JsonView");
          JsonView view = JsonView(client);
+                 Serial.println("1");
+
          view.addToJson(sensors);
+         Serial.println("Render");
          view.render();
         }else{
+            Serial.print("PATH:");
+            Serial.println(request.getPath());
             client << request.getPath();
         }
 
@@ -37,6 +43,9 @@ void RestWebServer::run(Controller *controller)
         // close the connection:
         client.stop();
         
+    }else{
+         
+         
     }
 }
 

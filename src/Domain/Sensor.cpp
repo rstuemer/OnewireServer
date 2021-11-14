@@ -55,7 +55,10 @@ String Sensor::getAddress(){
 }
 
 
-double TempSensor::getTemperatur(){
+float TempSensor::getTemperatur(){
     return this->getValueAsInt();
+}
+void TempSensor::setTemperatur(float newtemp){
+     temp=newtemp;
 }
 

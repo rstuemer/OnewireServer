@@ -10,7 +10,7 @@
 
 class JsonView {
 public:
-  JsonView(EthernetClient client);
+  JsonView(EthernetClient& client);
   void addToJson(Sensor *sensors);
   void render();
 
@@ -18,8 +18,8 @@ private:
   EthernetClient client;
   StaticJsonDocument<500> doc;
 
-  void printResponseHeader(EthernetClient client, size_t size, String content_typ);
-  void printJsonHeader(EthernetClient client, size_t size);
+  void printResponseHeader(EthernetClient& client, size_t size, String content_typ);
+  void printJsonHeader(EthernetClient& client, size_t size);
 };
 
 #endif

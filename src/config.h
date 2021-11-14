@@ -1,4 +1,6 @@
 
+#include <Arduino.h>
+
 #ifndef CONFIG_H // include guard
 #define CONFIG_H
 
@@ -31,7 +33,7 @@
 static uint8_t mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 
 // CHANGE THIS TO MATCH YOUR HOST NETWORK
-static uint8_t ip[] = { 192, 168, 17, 10 };
+static uint8_t ip[] = { 192, 168, 178, 77 };
 
 
 

@@ -28,10 +28,14 @@ class Sensor{
 
 class TempSensor: public Sensor{
     public:
-        double getTemperatur();
+        TempSensor();
+        TempSensor(uint8_t address[8]);
+        float getTemperatur();
         int getResolution();
+        void setTemperatur(float temp);
     private:
         int resolution;
+        float temp;
 
 };
 

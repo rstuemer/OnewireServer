@@ -8,13 +8,18 @@
 class Device{
     public:
         Device();
-        Device(OneWire*);
-        Device(OneWire*,DeviceAddress address);
-        void setDeviceAddress(DeviceAddress *address);
-        DeviceAddress* getDeviceAddress();
+        Device(OneWire* onewire);
+        Device(OneWire* onewire,const uint8_t * address);
+        void setDeviceAddress(const uint8_t *address);
+         uint8_t* getDeviceAddress();
         bool checkCrC();
+        int getId();
+        void setId(int id);
+        bool startConversion();
     private:
-        DeviceAddress* deviceAddress;
+        OneWire* onewire;
+        DeviceAddress deviceAddress;
+        int id;
 };
 
 #endif

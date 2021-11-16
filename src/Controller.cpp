@@ -39,7 +39,7 @@ void Controller::searchSensors(){
           Serial.println("  Chip = DS18B20");
            sensor =  new TempSensor(); 
           sensor->setFamilyCode(28);
-          ((TempSensor*)sensor)->setTemperatur(dallasSensors.getTempC(address));
+          sensor->setId(count);
           sensors[count++] = *sensor;
           type_s = 0;
           break;
@@ -51,16 +51,6 @@ void Controller::searchSensors(){
           Serial.println("Device is not a DS18x20 family device.");
           break;
       } 
-      if(address[0] == 28){
-        Serial.println("IS DS18B20");
-          float tempC = dallasSensors.getTempC(address);
-          //sensor.setValue(String(tempC));
-      }else{
-        Serial.print("FamilyCode");
-        Serial.println(address[0],HEX);
-      }
-      //sensors[count] = sensor;
-      //count++;
 
     } while (oneWire.search(address));
 
@@ -72,10 +62,26 @@ void Controller::searchSensors(){
 }
 
 Sensor* Controller::listAllSensors() {
-  
-  
-
   return sensors;
+}
+
+Sensor* Controller::getSensor(int id){
+    size_t count = sizeof(sensors);
+    Sensor sensor; 
+    for (size_t i = 0; i < count; i++)
+    {
+        if(sensors[i].getId() == id){
+          sensor = sensors[i];
+        }
+    }
+
+    return &sensor;
+    
+}
+
+Sensor* Controller::getSensorWithValue(int id){
+    Sensor* sensor = getSensor(id);
+    dallasSensors.requestTemperaturesByAddress(sensor->getDeviceAddress());
 }
 
 void Controller::debugInformations() {

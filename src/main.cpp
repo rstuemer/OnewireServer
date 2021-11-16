@@ -30,6 +30,13 @@
 
 RestWebServer* server;
  Controller* controller;
+
+ /**
+  * @brief 
+  * Init RestServer
+  * Search for OneWire Sensors
+  * 
+  */
 void setup()
 {
   Serial.begin(9600);
@@ -41,6 +48,7 @@ void setup()
    controller = new Controller();
     server->initEthernet();
     server->startEthernetServer();
+    controller->searchSensors();
    
 }
 

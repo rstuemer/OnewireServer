@@ -19,10 +19,10 @@ public:
     DallasTemperature dallasSensors;
     Sensor* listAllSensors();
     void debugInformations();
-
+    void Controller::searchSensors();
 private:
     String getLinkStatus();
-    Sensor* sensors[50];
+    Sensor sensors[50];
 };
 
 #endif

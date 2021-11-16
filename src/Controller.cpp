@@ -20,31 +20,11 @@ Controller::Controller() {
 
 }
 
-Sensor* Controller::listAllSensors() {
-  
- // OneWire ow(ONE_WIRE_BUS);
-  uint8_t count = 0;
-  uint8_t dummy_address[8];
-  // dummy_address[0] = 0xA0; // TLSB --> 10 degC as std
-  // dummy_address[1] = 0x00; // TMSB
-  // dummy_address[2] = 0x4B; // THRE --> Trigger register TH
-  // dummy_address[3] = 0x46; // TLRE --> TLow
-  // dummy_address[4] = 0x7F; // Conf
-  // // = 0 R1 R0 1 1 1 1 1 --> R=0 9bit .... R=3 12bit
-  // dummy_address[5] = 0xFF; // 0xFF
-  // dummy_address[6] = 0x00; // Reset
-  // dummy_address[7] = 0x10; // 0x10
 
-  // Sensor dummy_sensor = Sensor(dummy_address);
-  // dummy_sensor.setValue("21");
-  // dummy_sensor.setFamilyCode(28);
-  // sensors[count++] = dummy_sensor;
+void Controller::searchSensors(){
+  uint8_t count = 0;
   uint8_t address[8];
   byte type_s;
-
-
-
-  
   if (oneWire.search(address)) {
         do {
 
@@ -57,10 +37,10 @@ Sensor* Controller::listAllSensors() {
           break;
         case 0x28:
           Serial.println("  Chip = DS18B20");
-           sensor =  new TempSensor();
+           sensor =  new TempSensor(); 
           sensor->setFamilyCode(28);
           ((TempSensor*)sensor)->setTemperatur(dallasSensors.getTempC(address));
-          sensors[count++]=sensor;
+          sensors[count++] = *sensor;
           type_s = 0;
           break;
         case 0x22:
@@ -79,8 +59,6 @@ Sensor* Controller::listAllSensors() {
         Serial.print("FamilyCode");
         Serial.println(address[0],HEX);
       }
-      
-     
       //sensors[count] = sensor;
       //count++;
 
@@ -91,6 +69,11 @@ Sensor* Controller::listAllSensors() {
   }else{
     Serial.println("Nothing found");
   }
+}
+
+Sensor* Controller::listAllSensors() {
+  
+  
 
   return sensors;
 }

@@ -10,11 +10,11 @@ class Device{
         Device();
         Device(OneWire*);
         Device(OneWire*,DeviceAddress address);
-        
-    private:
-        void setDeviceAddress(DeviceAddress address);
+        void setDeviceAddress(DeviceAddress *address);
         DeviceAddress* getDeviceAddress();
-
+        bool checkCrC();
+    private:
+        DeviceAddress* deviceAddress;
 };
 
 #endif

@@ -2,8 +2,9 @@
 #define SENSOR_H
 #include "Arduino.h"
 #include "DallasTemperature.h"
+#include "Device.h"
 
-class Sensor{
+class Sensor: public Device{
   
     public:
         Sensor();

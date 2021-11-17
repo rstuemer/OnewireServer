@@ -6,8 +6,7 @@
 #include "Ethernet.h"
 #include "ArduinoJson.h"
 #include "Domain/Sensor.h"
-#include <OneWire.h>
-#include "DallasTemperature.h"
+#include "OneWire\OneWireBus.h"
 class Controller
 {
 public:
@@ -15,13 +14,13 @@ public:
           // Setup a oneWire instance to communicate with any OneWire devices (not just
   // Maxim/Dallas temperature ICs)
     OneWire oneWire;
-    // Pass our oneWire reference to Dallas Temperature.
-    DallasTemperature dallasSensors;
+    OneWireBus oneWireBus;
+
     Sensor* listAllSensors();
     void debugInformations();
     void searchSensors();
-    Sensor* getSensor(int id);
-    Sensor* getSensorWithValue(int id);
+    Sensor getSensor(int id);
+    Sensor getSensorWithValue(int id);
 private:
     String getLinkStatus();
     Sensor sensors[50];

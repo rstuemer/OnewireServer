@@ -9,11 +9,15 @@ class Request{
         void  processRequestString(String request[]); 
         String getHttpMethode();
         String getPath();
+        String getFirstPathsegment();
+        String getPathSegments();
     private: 
         String httpMethode;
         String path;   
        
 
 };
+
+
 
 #endif

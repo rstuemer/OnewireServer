@@ -1,35 +1,44 @@
 #include "Device.h"
+#include "Utils\Helper.h"
+#include "OneWire.h"
 
 Device::Device()
 {
 }
 
-Device::Device(OneWire * onewire)
-{
-    onewire = onewire;
-}
 
-Device::Device(OneWire * onewire, const uint8_t* address)
+Device::Device( const uint8_t* address)
 {
-        onewire = onewire;
-        deviceAddress = address;
+        setDeviceAddress(address);
 
 }
-void Device::setDeviceAddress(const uint8_t *address){
+
+bool Device::setDeviceAddress(DeviceAddress* address){
+    //TODO VALIDATE ADDRESS
     deviceAddress = address;
+    return true;
+}
+
+bool Device::setDeviceAddress(const uint8_t* address){
+    for (size_t i = 0; i < 8; i++)
+    {
+      *deviceAddress[i]=address[i];
+    }
+   return  validAddress();
 } 
 
 uint8_t* Device::getDeviceAddress() {
-    this->deviceAddress;
+    return *deviceAddress;
 }
 
-bool Device::checkCrC()
+bool Device::validAddress()
 {
-    if (OneWire::crc8(deviceAddress, 7) != deviceAddress[7])
+    if (OneWire::crc8(*deviceAddress, DSROM_CRC) != *deviceAddress[DSROM_CRC])
     {
         Serial.println("CRC is not valid!");
-        return;
+        return false;
     }
+    return true;
 }
 
 int Device::getId(){
@@ -37,13 +46,10 @@ int Device::getId(){
 }
 
 void Device::setId(int newId){
-    
-
     id = newId;
 }
 
-bool Device::startConversion(){
-  onewire->reset();
-  onewire->select(deviceAddress);
-  onewire->write(0x44, 1);        // start conversion, with parasite power on at the end
-}
+
+
+
+

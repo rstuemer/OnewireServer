@@ -1,10 +1,10 @@
 #ifndef SENSOR_H // include guard
 #define SENSOR_H
 #include "Arduino.h"
-#include "DallasTemperature.h"
+
 #include "Device.h"
 
-class Sensor: public Device{
+class Sensor: public Device {
   
     public:
         Sensor();
@@ -32,8 +32,12 @@ class TempSensor: public Sensor{
         TempSensor();
         TempSensor(uint8_t address[8]);
         float getTemperatur();
-        int getResolution();
         void setTemperatur(float temp);
+        uint8_t getResolution();
+        uint8_t readResolution();
+        void setResolution(uint8_t newResolution);
+    
+    
     private:
         int resolution;
         float temp;

@@ -14,44 +14,49 @@ void RestWebServer::run(Controller *controller)
 {
     // listen for incoming clients
 
-  
-
     EthernetClient client = this->server->available();
-     if (client)
+    if (client)
     {
         Request request = this->waitTillRequestEnded(client);
-        Serial.println("Request Ended");
-        if(request.getPath() == "/" && request.getHttpMethode() =="GET"){
-            Serial.println("Path is /");
-         Sensor* sensors = controller->listAllSensors();
-         Serial.println("Create JsonView");
-         JsonView view = JsonView(client);
-                 Serial.println("1");
 
-         view.addToJson(sensors);
-         Serial.println("Render");
-         view.render();
-        }else{
+        if (request.getPath() == "/" && request.getHttpMethode() == "GET")
+        {
+            Sensor *sensors = controller->listAllSensors();
+            JsonView view = JsonView(client);
+            view.addToJson(sensors);
+            view.render();
+            // PATH /sensors/{1}
+        }else if(request.getFirstPathsegment() == "sensors" && request.getHttpMethode() == "GET"){
+            int id = request.getPathSegments()[1];
+            Sensor sensor = controller->getSensorWithValue(id);
+            JsonView view = JsonView(client);
+            Sensor sensors[1];
+            sensors[0]=sensor;
+             view.addToJson(sensors);
+
+
+
+        }
+        else 
+        {
             Serial.print("PATH:");
             Serial.println(request.getPath());
             client << request.getPath();
         }
 
-  
         // give the web browser time to receive the data
         delay(10);
         // close the connection:
         client.stop();
-        
-    }else{
-         
-         
+    }
+    else
+    {
     }
 }
 
- Request RestWebServer::waitTillRequestEnded(EthernetClient client)
+Request RestWebServer::waitTillRequestEnded(EthernetClient client)
 {
-      Request requestObj =  Request();
+    Request requestObj = Request();
 
     if (client)
     {
@@ -59,9 +64,9 @@ void RestWebServer::run(Controller *controller)
         // an http request ends with a blank line
         boolean currentLineIsBlank = true;
         String line = "";
-        String request[10] =  {};
-        int lineCount=0;
-      
+        String request[10] = {};
+        int lineCount = 0;
+
         while (client.connected())
         {
 
@@ -81,63 +86,62 @@ void RestWebServer::run(Controller *controller)
                 {
                     // you're starting a new line
                     currentLineIsBlank = true;
-                    request[lineCount++] = line;            
+                    request[lineCount++] = line;
                     line = "";
                 }
                 else if (c != '\r')
                 {
-                    line+= c;
+                    line += c;
                     // you've gotten a character on the current line
                     currentLineIsBlank = false;
                 }
             }
         }
-      
+
         requestObj.processRequestString(request);
     }
-        return requestObj;
+    return requestObj;
 }
-
 
 void RestWebServer::startEthernetServer()
 {
-        // start the server
-        this->server->begin();
-    #ifdef SERIAL_DEBUGGING
-        Serial.print("SERVER ON AT: ");
-        Serial.println(Ethernet.localIP());
-    #endif
+    // start the server
+    this->server->begin();
+#ifdef SERIAL_DEBUGGING
+    Serial.print("SERVER ON AT: ");
+    Serial.println(Ethernet.localIP());
+#endif
 }
 
 String RestWebServer::initEthernet()
 {
-    // You can use Ethernet.init(pin) to configure the CS pin
-    //Ethernet.init(10);  // Most Arduino shields
-    //Ethernet.init(5);   // MKR ETH shield
-    //Ethernet.init(0);   // Teensy 2.0
-    //Ethernet.init(20);  // Teensy++ 2.0
-    //Ethernet.init(15);  // ESP8266 with Adafruit Featherwing Ethernet
-    //Ethernet.init(33);  // ESP32 with Adafruit Featherwing Ethernet
-    #ifdef SERIAL_DEBUGGING
-        Serial.println("Ethernet WebServer Example");
-    #endif
+// You can use Ethernet.init(pin) to configure the CS pin
+//Ethernet.init(10);  // Most Arduino shields
+//Ethernet.init(5);   // MKR ETH shield
+//Ethernet.init(0);   // Teensy 2.0
+//Ethernet.init(20);  // Teensy++ 2.0
+//Ethernet.init(15);  // ESP8266 with Adafruit Featherwing Ethernet
+//Ethernet.init(33);  // ESP32 with Adafruit Featherwing Ethernet
+#ifdef SERIAL_DEBUGGING
+    Serial.println("Ethernet WebServer Example");
+#endif
 
-        // start the Ethernet connection and the server:
-        Ethernet.begin(mac, ip);
+    // start the Ethernet connection and the server:
+    Ethernet.begin(mac, ip);
 
-        // Check for Ethernet hardware present
-        if (Ethernet.hardwareStatus() == EthernetNoHardware)
-        {
-    #ifdef SERIAL_DEBUGGING
-            Serial.println("Ethernet shield was not found.  Sorry, can't run without hardware. :(");
-    #endif
-            return "Ethernet shield was not found.  Sorry, can't run without hardware. :(";
-        }
-        if (Ethernet.linkStatus() == LinkOFF)
-        {
-    #ifdef SERIAL_DEBUGGING
-            Serial.println("Ethernet cable is not connected.");
-    #endif
+    // Check for Ethernet hardware present
+    if (Ethernet.hardwareStatus() == EthernetNoHardware)
+    {
+#ifdef SERIAL_DEBUGGING
+        Serial.println("Ethernet shield was not found.  Sorry, can't run without hardware. :(");
+#endif
+        return "Ethernet shield was not found.  Sorry, can't run without hardware. :(";
+    }
+    if (Ethernet.linkStatus() == LinkOFF)
+    {
+#ifdef SERIAL_DEBUGGING
+        Serial.println("Ethernet cable is not connected.");
+#endif
         return "Ethernet cable is not connected.";
     }
 

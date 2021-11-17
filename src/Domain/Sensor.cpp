@@ -62,3 +62,13 @@ void TempSensor::setTemperatur(float newtemp){
      temp=newtemp;
 }
 
+
+uint8_t TempSensor::getResolution(){
+	return resolution;
+}
+
+void TempSensor::setResolution(uint8_t newResolution){
+	resolution = newResolution;
+}
+
+

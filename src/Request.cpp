@@ -27,6 +27,16 @@ String Request::getPath()
     return this->path;
 }
 
+String Request::getFirstPathsegment() 
+{
+    return getValueAtIndex(this->path,'/',0);
+}
+
+String Request::getPathSegments() 
+{
+    String string = getPath();
+    return *splitString(string,'/');
+}
 String Request::getHttpMethode()
 {
     return this->httpMethode;

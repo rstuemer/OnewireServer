@@ -3,7 +3,7 @@
 #define DEVICE_H
 #include "Arduino.h"
 
-#include "OneWire\onewireConfig.h"
+#include "OneWire/onewireConfig.h"
 
 class Device{
     public:

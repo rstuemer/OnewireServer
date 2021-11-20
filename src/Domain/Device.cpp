@@ -1,5 +1,5 @@
 #include "Device.h"
-#include "Utils\Helper.h"
+#include "Utils/Helper.h"
 #include "OneWire.h"
 
 Device::Device()

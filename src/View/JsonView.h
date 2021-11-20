@@ -4,7 +4,6 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include <Ethernet.h>
-#include "JsonView.h"
 #include <ArduinoJson.h>
 #include "../Domain/Sensor.h"
 

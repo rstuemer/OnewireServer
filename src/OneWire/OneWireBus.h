@@ -1,10 +1,10 @@
 #ifndef __ONEWIREBUS_H__
 #define __ONEWIREBUS_H__
 #include "Arduino.h"
-#include "OneWire\onewireConfig.h"
+#include "OneWire/onewireConfig.h"
 #include "OneWire.h"
-#include "Domain\Sensor.h"
-#include "Utils\Helper.h"
+#include "Domain/Sensor.h"
+#include "Utils/Helper.h"
 
 
 class OneWireBus{

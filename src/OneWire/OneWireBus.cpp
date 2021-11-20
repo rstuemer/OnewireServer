@@ -1,5 +1,5 @@
 #include "OneWireBus.h"
-
+#include "Domain/Sensor.h"
 
 OneWireBus::OneWireBus(){
     onewire = OneWire(ONEWIRE_CONFIG);
@@ -13,7 +13,6 @@ OneWireBus::OneWireBus(OneWire *onewire)
 	waitForConversion = true;
 	checkForConversion = true;
     autoSaveScratchPad = true;
-    sensors[MAX_SENSORS];
 }
 
 bool OneWireBus::readScratchPad(const DeviceAddress* deviceAddress,ScratchPad* scratchPad)
@@ -146,7 +145,7 @@ bool OneWireBus::startConversion(){
 
 	// ASYNC mode?
 	if (!waitForConversion)
-		return;
+		return true;
 	return waitUntilConversionComplete(bitResolution);
 }
 
@@ -172,7 +171,7 @@ bool OneWireBus::startConversion(DeviceAddress* address){
 	if (!waitForConversion)
 		return true;
 
-	bool waitUntilConversionComplete(bitResolution);
+	return waitUntilConversionComplete(bitResolution);
 }
 
 bool OneWireBus::waitUntilConversionComplete(uint8_t bitResolution){
@@ -187,6 +186,7 @@ bool OneWireBus::waitUntilConversionComplete(uint8_t bitResolution){
     delay(delms);
     //deactivateExternalPullup();
   }
+  return true;
 
 }
 
@@ -222,9 +222,10 @@ Sensor* OneWireBus::searchSensors()
 {
     uint8_t count = 0;
     uint8_t address[8];
-    byte type_s;
     if (onewire.search(address))
     {
+            byte type_s;
+
         do
         {
 

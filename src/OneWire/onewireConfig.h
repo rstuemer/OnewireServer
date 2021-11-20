@@ -2,8 +2,7 @@
 #ifndef ONEWIRE_CONFIG
 #define ONEWIRE_CONFIG
 
-
-
+#include "Arduino.h"
 #define ONE_WIRE_PIN = 14
 #define MAX_SENSORS 30
 #define MAX_CONVERSION_TIMEOUT		750

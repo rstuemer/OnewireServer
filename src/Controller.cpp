@@ -20,6 +20,10 @@ Controller::Controller() {
 
 
 
+void Controller::searchSensors(){
+  
+}
+
 Sensor* Controller::listAllSensors() {
   return oneWireBus.getSensors();
 }

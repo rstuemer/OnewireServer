@@ -5,7 +5,7 @@
 #include "OneWire.h"
 #include "Domain/Sensor.h"
 #include "Utils/Helper.h"
-
+#include "Vector.h"
 
 class OneWireBus{
 
@@ -39,7 +39,7 @@ class OneWireBus{
 
         bool isParasiteModeON();
         bool isParasiteModeON(DeviceAddress address);
-        Sensor* searchSensors();
+        void searchSensors(Vector<Sensor> *sensors);
         bool crc8(const DeviceAddress *addr, uint8_t len);
         bool startConversion();
         bool startConversion(DeviceAddress* address);
@@ -47,9 +47,10 @@ class OneWireBus{
          bool waitUntilConversionComplete(uint8_t);
          uint8_t readResolution(DeviceAddress* deviceAddress);
          bool isConversionComplete();
-         Sensor* getSensors();
+        
     private:
         OneWire onewire;
+   
         bool readParasiteModefromBus();
         // if true save values from scratchpad to EEPROM on every scratchpad write
         bool autoSaveScratchPad;
@@ -69,7 +70,7 @@ class OneWireBus{
 
         // used to requestTemperature to dynamically check if a conversion is complete
         bool checkForConversion;
-        Sensor* sensors[MAX_SENSORS];
+        //Sensor* sensors[MAX_SENSORS];
         int16_t millisToWaitForConversion(uint8_t bitResolution);
 
 

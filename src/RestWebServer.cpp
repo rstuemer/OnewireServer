@@ -2,32 +2,45 @@
 #include "Domain/Sensor.h"
 #include "View/JsonView.h"
 
-RestWebServer::RestWebServer()
+RestWebServer::RestWebServer(EthernetServer* server)
 {
     // Initialize the Ethernet server library
     // with the IP address and port you want to use
     // (port 80 is default for HTTP):
-    this->server = new EthernetServer(SERVER_PORT);
+    this->server =  server;
+   
 }
 
 void RestWebServer::run(Controller *controller)
 {
     // listen for incoming clients
-
+ 
+    
     EthernetClient client = this->server->available();
     if (client)
     {
+        Serial.println("client available");
         Request request = this->waitTillRequestEnded(client);
-
+        //Serial.println("w");
+       // Serial.println(request.getFirstPathsegment());
         if (request.getPath() == "/" && request.getHttpMethode() == "GET")
         {
-            Sensor *sensors = controller->listAllSensors();
+            Vector<Sensor> sensors = controller->listAllSensors();
             JsonView view = JsonView(client);
             view.addToJson(sensors);
             view.render();
             // PATH /sensors/{1}
+        }else if(request.getFirstPathsegment() == "search" && request.getHttpMethode() == "GET"){
+            Serial.println("Search Sensors");
+            controller->searchSensors();
+             Vector<Sensor> sensors =  controller->listAllSensors();
+              JsonView view = JsonView(client);
+            view.addToJson(sensors);
+            view.render();
         }else if(request.getFirstPathsegment() == "sensors" && request.getHttpMethode() == "GET"){
             int id = request.getPathSegments()[1];
+            Serial.print("ID:");
+            Serial.println(id);
             Sensor sensor = controller->getSensorWithValue(id);
             JsonView view = JsonView(client);
             Sensor sensors[1];
@@ -40,6 +53,8 @@ void RestWebServer::run(Controller *controller)
         else 
         {
             Serial.print("PATH:");
+            client << "FirstPathSegment";
+            client << request.getFirstPathsegment();
             Serial.println(request.getPath());
             client << request.getPath();
         }
@@ -69,6 +84,7 @@ Request RestWebServer::waitTillRequestEnded(EthernetClient client)
 
         while (client.connected())
         {
+            
 
             if (client.available())
             {
@@ -95,10 +111,13 @@ Request RestWebServer::waitTillRequestEnded(EthernetClient client)
                     // you've gotten a character on the current line
                     currentLineIsBlank = false;
                 }
+            }else{
+                Serial.println("Cleint not available");
             }
         }
 
         requestObj.processRequestString(request);
+        Serial.println("Request Processed");
     }
     return requestObj;
 }
@@ -106,44 +125,12 @@ Request RestWebServer::waitTillRequestEnded(EthernetClient client)
 void RestWebServer::startEthernetServer()
 {
     // start the server
-    this->server->begin();
-#ifdef SERIAL_DEBUGGING
+       Serial.print("SERVER BEGIN: ");
+
+    server->begin();
     Serial.print("SERVER ON AT: ");
     Serial.println(Ethernet.localIP());
-#endif
+   
+
 }
 
-String RestWebServer::initEthernet()
-{
-// You can use Ethernet.init(pin) to configure the CS pin
-//Ethernet.init(10);  // Most Arduino shields
-//Ethernet.init(5);   // MKR ETH shield
-//Ethernet.init(0);   // Teensy 2.0
-//Ethernet.init(20);  // Teensy++ 2.0
-//Ethernet.init(15);  // ESP8266 with Adafruit Featherwing Ethernet
-//Ethernet.init(33);  // ESP32 with Adafruit Featherwing Ethernet
-#ifdef SERIAL_DEBUGGING
-    Serial.println("Ethernet WebServer Example");
-#endif
-
-    // start the Ethernet connection and the server:
-    Ethernet.begin(mac, ip);
-
-    // Check for Ethernet hardware present
-    if (Ethernet.hardwareStatus() == EthernetNoHardware)
-    {
-#ifdef SERIAL_DEBUGGING
-        Serial.println("Ethernet shield was not found.  Sorry, can't run without hardware. :(");
-#endif
-        return "Ethernet shield was not found.  Sorry, can't run without hardware. :(";
-    }
-    if (Ethernet.linkStatus() == LinkOFF)
-    {
-#ifdef SERIAL_DEBUGGING
-        Serial.println("Ethernet cable is not connected.");
-#endif
-        return "Ethernet cable is not connected.";
-    }
-
-    return "OK";
-}

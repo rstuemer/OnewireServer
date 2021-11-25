@@ -2,12 +2,20 @@
 #include "Domain/Sensor.h"
 
 OneWireBus::OneWireBus(){
-    onewire = OneWire(ONEWIRE_CONFIG);
-
+    onewire =  OneWire(10);
+    onewire.begin(10);
+	parasite = false;
+	bitResolution = 9;
+	waitForConversion = true;
+	checkForConversion = true;
+    autoSaveScratchPad = true;
+    //OneWireBus(onewire);
 }
 OneWireBus::OneWireBus(OneWire *onewire)
 {
+    
     onewire = onewire;
+    onewire->begin(10);
 	parasite = false;
 	bitResolution = 9;
 	waitForConversion = true;
@@ -207,9 +215,9 @@ int16_t OneWireBus::millisToWaitForConversion(uint8_t bitResolution) {
 }
 
 
-Sensor* OneWireBus::getSensors(){
-    return *sensors;
-}
+//Sensor* OneWireBus::getSensors(){
+  //  return *sensors;
+//}
 
 bool OneWireBus::isConversionComplete(){
     uint8_t b = onewire.read_bit();
@@ -218,53 +226,70 @@ bool OneWireBus::isConversionComplete(){
 
 
 
-Sensor* OneWireBus::searchSensors()
+ void OneWireBus::searchSensors(Vector<Sensor> *sensors)
 {
+    
+   
     uint8_t count = 0;
-    uint8_t address[8];
-    if (onewire.search(address))
+    byte address[8];
+     Serial.println("SearchSensors"); 
+     //onewire.reset();
+    bool more = onewire.search(address);
+       Serial.print("more:");
+    Serial.println(more);
+     if(true){
+    if (more)
     {
-            byte type_s;
+        Serial.println("one wire search= true");
+        if(true)   {
+            //byte type_s;
 
         do
         {
-
-            Sensor* sensor;
+                Serial.print("Address 0:");
+                Serial.println(address[0]); // or old DS1820
+            Sensor sensor;
             // the first ROM byte indicates which chip
             switch (address[0])
             {
             case 0x10:
                 Serial.println("  Chip = DS18S20"); // or old DS1820
-                type_s = 1;
+                //type_s = 1;
                 break;
             case 0x28:
                 Serial.println("  Chip = DS18B20");
-                sensor = new TempSensor();
-                sensor->setFamilyCode(28);
-                sensor->setId(count);
-                ((TempSensor*)sensor)->readResolution();
-                sensors[count++] = sensor;
-                type_s = 0;
+                sensor =  TempSensor();
+                sensor.setFamilyCode(28);
+                sensor.setId(count);
+                sensor.setName("DS18B20" + count);
+                //((TempSensor)sensor).readResolution();
+                sensors->push_back(sensor);
+                //type_s = 0;
                 break;
             case 0x22:
                 Serial.println("  Chip = DS1822");
-                type_s = 0;
+                //type_s = 0;
                 break;
             default:
                 Serial.println("Device is not a DS18x20 family device.");
                 break;
             }
+            count++;
 
         } while (onewire.search(address));
 
         Serial.print("Sensors found:");
         Serial.println(count);
+        }
     }
     else
     {
+        onewire.reset_search();
         Serial.println("Nothing found");
     }
-    return *sensors;
+
+    }
+
 }
 
 bool OneWireBus::crc8(const DeviceAddress *addr, uint8_t len){

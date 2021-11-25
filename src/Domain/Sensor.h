@@ -13,7 +13,9 @@ class Sensor: public Device {
         int getValueAsInt();
         uint8_t getFamilyCode();
         String getAddress();
+        String getName();
         void setValue(String value);
+         void setName(String name);
         void setFamilyCode(uint8_t value);
         void setAddress(uint8_t  raw_address[8]);
     protected:

@@ -44,19 +44,23 @@ void JsonView::printResponseHeader(EthernetClient& client, size_t size,String co
 }
 
 
-void JsonView::addToJson(Sensor * sensors){
+void JsonView::addToJson(Vector<Sensor>  sensors){
     JsonObject obj = doc.to<JsonObject>();
-    size_t size = sizeof(sensors);
+    size_t size = sensors.size();
 
     Serial.println("Add new Sensor:");
-    Serial.print(size);
+    Serial.print("Sensors Count:" );
+        Serial.println( size);
+
     for (size_t i = 0; i < size; i++)
     {
        JsonObject newSensorJson = obj.createNestedObject(String(i));
-        Sensor s = sensors[i];
+        Sensor s = sensors.at(i);
         newSensorJson["address"] = s.getAddress();
         newSensorJson["family"] = s.getFamilyCode();
         newSensorJson["value"] = s.getValue();
+         newSensorJson["name"] = s.getName();
+         newSensorJson["id"] = s.getId();
     }
 
         Serial.println("READY Add new Sensor");

@@ -27,8 +27,12 @@ bool Device::setDeviceAddress(const uint8_t* address){
    return  validAddress();
 } 
 
-uint8_t* Device::getDeviceAddress() {
+const uint8_t* Device::getDeviceAddress() {
     return *deviceAddress;
+}
+
+const DeviceAddress* Device::getDeviceAddressObject() {
+    return deviceAddress;
 }
 
 bool Device::validAddress()

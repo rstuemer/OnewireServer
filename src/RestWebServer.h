@@ -16,14 +16,14 @@
 
 class RestWebServer{
     public:
-        RestWebServer();
+        RestWebServer(EthernetServer* server);
         String initEthernet();
         void startEthernetServer();
         void run(Controller* controller);
         Request waitTillRequestEnded(EthernetClient client);
         void printResponseHeader(EthernetClient client,size_t size,String content_typ);
     private:
-        EthernetServer* server;
+       EthernetServer* server;
         void printJsonHeader(EthernetClient client,size_t size);
           
 };

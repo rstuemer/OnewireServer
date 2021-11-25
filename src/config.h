@@ -26,17 +26,18 @@
 #ifndef SERVER_PORT
 #define SERVER_PORT 80
 #endif
-
 // Enter a MAC address and IP address for your controller below.
 // The IP address will be dependent on your local network:
 // CHANGE THIS TO YOUR OWN UNIQUE VALUE
-static uint8_t mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
+//static uint8_t mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 
 // CHANGE THIS TO MATCH YOUR HOST NETWORK
-static uint8_t ip[] = { 192, 168, 178, 77 };
-
+//static uint8_t ip[] = { 192, 168, 178, 55 };
 
 
 #define PREFIX ""
 
 #endif
+
+
+

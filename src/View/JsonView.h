@@ -6,11 +6,12 @@
 #include <Ethernet.h>
 #include <ArduinoJson.h>
 #include "../Domain/Sensor.h"
+#include "Vector.h"
 
 class JsonView {
 public:
   JsonView(EthernetClient& client);
-  void addToJson(Sensor *sensors);
+  void addToJson(Vector<Sensor>  sensors);
   void render();
 
 private:

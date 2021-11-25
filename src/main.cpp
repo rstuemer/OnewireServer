@@ -1,4 +1,4 @@
-/* Web_Demo.pde -- sample code for Webduino server library */
+
 
 /*
  * To use this demo,  enter one of the following USLs into your browser.
@@ -34,6 +34,25 @@
 RestWebServer* server;
  Controller* controller;
 
+
+// Initialize the Ethernet server library
+// with the IP address and port you want to use
+// (port 80 is default for HTTP):
+EthernetServer ethernetServer(80);
+
+
+
+// Enter a MAC address and IP address for your controller below.
+// The IP address will be dependent on your local network:
+// CHANGE THIS TO YOUR OWN UNIQUE VALUE
+static uint8_t mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
+
+// CHANGE THIS TO MATCH YOUR HOST NETWORK
+static uint8_t ip[] = { 192, 168, 178, 55 };
+
+
+
+
  /**
   * @brief 
   * Init RestServer
@@ -47,16 +66,37 @@ void setup()
     Serial.println("Starting");
   #endif
 
-   server = new RestWebServer();
+
+
+
+     server = new RestWebServer(&ethernetServer);
+       Serial.println("RestServer Initialiezed");
+     // server->initEthernet();
+
    controller = new Controller();
-    server->initEthernet();
-    server->startEthernetServer();
-    controller->searchSensors();
-   
+  Serial.println("Controller Initialiezed");
+
+  Ethernet.begin(mac, ip);
+      Serial.println("Ethernet.begin Initialiezed");
+
+  ethernetServer.begin();
+  Serial.print("server is at ");
+  Serial.println(Ethernet.localIP());
+
+   //Serial.println(server->initEthernet());
+    //server->startEthernetServer();
+    //Serial.println("Start search sensors");
+    //controller->searchSensors();
+    Serial.println("Startup done.");
+
+       
+
 }
 
 void loop()
 {
+    
   server->run(controller);
   
 }
+   

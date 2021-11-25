@@ -13,7 +13,8 @@ class Device{
         bool setDeviceAddress(const uint8_t *address);
         bool setDeviceAddress(DeviceAddress* address);
 
-         uint8_t* getDeviceAddress();
+        const  uint8_t* getDeviceAddress();
+        const  DeviceAddress* getDeviceAddressObject();
         bool validAddress();
         int getId();
         void setId(int id);

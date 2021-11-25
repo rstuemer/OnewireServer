@@ -16,7 +16,7 @@ void Request::processRequestString(String request[])
     this->path = firstLine.substring(indexFirstSpace , indexSecondSpace); */
     String* splittedRequestLine = splitString(request[0],' '); 
     this->httpMethode = splittedRequestLine[0];
-    this->path = splittedRequestLine[1];
+    this->path =  splittedRequestLine[1];
     
     
 
@@ -29,7 +29,13 @@ String Request::getPath()
 
 String Request::getFirstPathsegment() 
 {
-    return getValueAtIndex(this->path,'/',0);
+    String string = getPath();
+    if(string.indexOf("/")==0)
+        string = string.substring(1);
+        if(string.indexOf("/")==-1)
+        return string;
+    return splitString(string,'/')[0];
+    // getValueAtIndex(this->path,'/',0);
 }
 
 String Request::getPathSegments() 

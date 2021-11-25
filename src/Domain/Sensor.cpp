@@ -18,6 +18,10 @@ void Sensor::setFamilyCode(uint8_t family){
      this->family = family;
 }
 
+String Sensor::getName(){
+    return this->name;
+}
+
 uint8_t Sensor::getFamilyCode(){
     return family;
 }
@@ -39,6 +43,7 @@ int Sensor::getValueAsInt() { return this->value.toInt(); }
  * @param value 
  */
 void Sensor::setValue(String value) { this->value = value; }
+void Sensor::setName(String name) { this->name = name; }
 
 String Sensor::getAddress(){
     String addressString;
